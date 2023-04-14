@@ -5,38 +5,52 @@ import os
 
 import requests
 
-# Set the Discord webhook URL
-webhook_url = os.environ.get("DLC_WEBHOOK_URL")
 
-# Load the CSV file
-with open("neetcode_150_list.csv", newline="") as csvfile:
-    reader = csv.reader(csvfile)
+def send_discord_message(webhook_url, message):
+    """
+    Sends a message to a Discord webhook.
 
-    # Skip the header row
-    next(reader)
+    Parameters:
+    webhook_url (str): The URL of the Discord webhook.
+    message (str): The message to send.
 
-    # Loop through the rows in the CSV file
-    for idx, row in enumerate(reader):
+    Raises:
+    Exception: If there is an error sending the message.
+    """
 
-        # Get the date and link from the current row
-        date_str, link = row
+    payload = {"content": message}
 
-        # Convert the date string to a datetime object
-        date_obj = datetime.datetime.strptime(date_str, "%m/%d/%y").date()
+    # Send the message to the Discord webhook
+    response = requests.post(
+        webhook_url,
+        data=json.dumps(payload),
+        headers={"Content-Type": "application/json"},
+    )
 
-        # Check if the date matches today's date
-        if date_obj == datetime.date.today():
+    if response.status_code != 204:
+        raise Exception(f"Error sending message: {response.text}")
 
-            # Create the message payload for the Discord webhook
-            payload = {"content": f"Day {idx+1}: {link}"}
 
-            # Send the message to the Discord webhook
-            response = requests.post(
-                webhook_url,  # type: ignore
-                data=json.dumps(payload),
-                headers={"Content-Type": "application/json"},
-            )
+if __name__ == "__main__":
+    # Set the Discord webhook URL
+    webhook_url = os.environ.get("DLC_WEBHOOK_URL")
 
-            # Check if the message was sent successfully
-            if response.status_code != 204:
-                raise Exception(f"Error sending message: {response.text}")
+    with open("neetcode_150_list.csv", newline="") as csvfile:
+        reader = csv.reader(csvfile)
+
+        # Skip the header row
+        next(reader)
+
+        for idx, row in enumerate(reader):
+
+            date_str, link = row
+
+            date_obj = datetime.datetime.strptime(date_str, "%m/%d/%y").date()
+
+            if date_obj == datetime.date.today():
+                message = f"Day {idx+1}: {link}"
+                try:
+                    send_discord_message(webhook_url, message)
+                except Exception as e:
+                    print(f"An error occurred while sending the Discord message: {e}")
+                    raise e
