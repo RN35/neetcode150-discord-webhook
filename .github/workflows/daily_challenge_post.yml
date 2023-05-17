@@ -22,4 +22,7 @@ jobs:
       - name: Run webhook POST
         env:
           DLC_WEBHOOK_URL: ${{ secrets.DLC_WEBHOOK_URL }}
+          LEETCODE_CHANNEL_ID: ${{ secrets.LEETCODE_CHANNEL_ID }}
+          SOLUTIONS_CHANNEL_ID: ${{ secrets.SOLUTIONS_CHANNEL_ID }}
+          BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
         run: python discord_webhook.py
