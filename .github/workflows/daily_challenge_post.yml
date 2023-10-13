@@ -22,4 +22,5 @@ jobs:
       - name: Run webhook POST
         env:
           DLC_WEBHOOK_URL: ${{ secrets.DLC_WEBHOOK_URL }}
+          DLC_WEBHOOK_URL_2: ${{ secrets.DLC_WEBHOOK_URL_2 }}
         run: python discord_webhook.py
