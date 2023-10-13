@@ -30,12 +30,10 @@ def send_discord_message(webhook_url, message):
     if response.status_code != 204:
         raise Exception(f"Error sending message: {response.text}")
 
+def run_thread(webhook_url, filename):
+    
 
-if __name__ == "__main__":
-    # Set the Discord webhook URL
-    webhook_url = os.environ.get("DLC_WEBHOOK_URL")
-
-    with open("neetcode_150_list.csv", newline="") as csvfile:
+    with open(filename, newline="") as csvfile:
         reader = csv.reader(csvfile)
 
         # Skip the header row
@@ -54,3 +52,12 @@ if __name__ == "__main__":
                 except Exception as e:
                     print(f"An error occurred while sending the Discord message: {e}")
                     raise e
+
+
+if __name__ == "__main__":
+    # Set the Discord webhook URL
+    easy_webhook_url = os.environ.get("DLC_WEBHOOK_URL")
+    shuffled_webhook_url = os.environ.get("DLC_WEBHOOK_URL_2")
+
+    run_thread(easy_webhook_url, "ordered-neetcode_150_list.csv")
+    run_thread(shuffled_webhook_url, "shuffled-neetcode_150_list.csv")
